@@ -1,5 +1,68 @@
+# Package metadata: what PyPI shows and what `uv` installs.
 [project]
 name = "eventer-mcp"
 version = "0.1.0"
+description = "Multi-user event planning for AI agents (MCP server)"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "George" }]
 requires-python = ">=3.12"
-dependencies = []
+# Runtime dependencies. `<3` = don't jump to a future major version that may break us.
+dependencies = [
+    "mcp[cli]>=2.3,<3",
+    "sqlmodel>=0.0.50",
+]
+
+# Creates the `eventer-mcp` command, which calls main() in src/eventer_mcp/cli.py.
+[project.scripts]
+eventer-mcp = "eventer_mcp.cli:main"
+
+# How the package is built into a wheel (uv's own build backend; src/ layout).
+[build-system]
+requires = ["uv_build>=0.13.7,<0.14.0"]
+build-backend = "uv_build"
+
+# ruff = linter + formatter.
+[tool.ruff]
+line-length = 100
+
+# Rule sets: E/W style errors, F pyflakes (real bugs), I import order, UP modern syntax,
+# B bugbear (likely bugs), SIM simplifications.
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM"]
+
+# pyright = type checker. 'basic' mode catches real mistakes without being too strict.
+[tool.pyright]
+include = ["src", "tests"]
+typeCheckingMode = "basic"
+pythonVersion = "3.12"
+venvPath = "."
+venv = ".venv"
+
+# -ra: summary of skipped/failed tests; --strict-markers: typos in @pytest.mark.* are errors.
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+
+# Coverage measures which lines the tests actually execute. branch=true also checks both sides of each if.
+[tool.coverage.run]
+source = ["eventer_mcp"]
+branch = true
+
+# Dev-only tools: installed for development and CI, NOT for people who install the package.
+[dependency-groups]
+dev = [
+    "anyio>=4.16.0",
+    "hypothesis>=6.170.17",
+    "pyright>=1.1.414",
+    "pytest>=9.2.0",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.17.6",
+]
+
+# The build fails if coverage drops under 80%. Missing lines are listed.
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+skip_covered = true

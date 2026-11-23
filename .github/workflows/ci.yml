@@ -1,0 +1,33 @@
+# Continuous integration: GitHub runs these checks automatically on every push to
+# main and on every pull request. A red X = something is broken; don't merge.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    strategy:
+      # Keep running the other OS if one fails, so we see all problems at once.
+      fail-fast: false
+      matrix:
+        # Windows because that's the dev machine; Linux because that's where it's hosted.
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5          # get the repo's code
+      - uses: astral-sh/setup-uv@v7        # install uv (it installs Python too)
+        with:
+          enable-cache: true               # reuse downloaded packages between runs
+      - name: Install
+        run: uv sync --locked              # exact versions from uv.lock; fails if the lock is outdated
+      - name: Lint
+        run: uv run ruff check .           # common bugs, unused imports, import order
+      - name: Format
+        run: uv run ruff format --check .  # code style; run `uv run ruff format .` to fix
+      - name: Types
+        run: uv run pyright                # checks type hints
+      - name: Tests + coverage (fails under 80%)
+        run: uv run pytest --cov --cov-report=term-missing

@@ -136,9 +136,9 @@ After each session: commit, push, CI green, add 2 lines to `PROJECT_MEMORY.md` p
 ### M0 — Setup & skeleton (2 sessions, → Nov 25)
 
 - [ ] **0.1 Install tools.** Git, uv, Node LTS, Claude Desktop, Claude Code. Create GitHub repo `eventer-mcp` (public, MIT). ✅ `uv --version`, `node -v`, `git --version` work.
-- [ ] **0.2 Scaffold.** `uv init --package eventer-mcp` (src layout); add deps above; ruff/pyright/pytest config in `pyproject.toml`; `.gitignore` (incl. `.env`, `*.db`); `.env.example`; LICENSE; copy `CLAUDE.md` + `docs/PLAN.md` + `docs/EVENT_MCP_BRIEF.md`. ✅ `uv run pytest` runs one dummy test.
+- [x] **0.2 Scaffold.** `uv init --package eventer-mcp` (src layout); add deps above; ruff/pyright/pytest config in `pyproject.toml`; `.gitignore` (incl. `.env`, `*.db`); `.env.example`; LICENSE; copy `CLAUDE.md` + `docs/PLAN.md` + `docs/EVENT_MCP_BRIEF.md`. ✅ `uv run pytest` runs one dummy test.
 - [ ] **0.3 Hello server.** `app.py` with `MCPServer("eventer")` + a `ping` tool; `cli.py` with `run --transport stdio`. ✅ `ping` works in MCP Inspector.
-- [ ] **0.4 First e2e test.** `tests/e2e/test_ping.py` using the in-memory `Client` (see Testing docs). ✅ passes.
+- [x] **0.4 First e2e test.** `tests/e2e/test_ping.py` using the in-memory `Client` (see Testing docs). ✅ passes.
 - [ ] **0.5 CI.** `.github/workflows/ci.yml`: `uv sync` → `ruff check` → `ruff format --check` → `pyright` → `pytest --cov` (fail under 80% on `services/` + `algorithms/`). Run on ubuntu + windows. Protect `main`: merge via PR only when CI is green. ✅ green on GitHub.
 - [ ] **0.6 Claude Desktop.** Add `eventer` to the config (`uv --directory <repo> run eventer-mcp run`). ✅ Claude calls `ping`.
 
